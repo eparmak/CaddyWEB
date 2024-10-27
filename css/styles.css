@@ -1,0 +1,136 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1e1e1e;
+    color: #ffffff;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 90%;
+    margin: 50px auto;
+}
+
+h1 {
+    text-align: center;
+    color: #f5ba13;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    min-width: 400px;
+}
+
+table thead th {
+    background-color: #333;
+    color: #f5ba13;
+    padding: 12px;
+    text-align: left;
+}
+
+table tbody tr {
+    border-bottom: 1px solid #444;
+}
+
+table tbody td {
+    padding: 10px;
+}
+
+table tbody tr:nth-child(even) {
+    background-color: #2a2a2a;
+}
+
+table tbody tr:hover {
+    background-color: #444;
+}
+
+button {
+    padding: 8px 12px;
+    margin-right: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+.edit-btn {
+    background-color: #f5ba13;
+    color: #1e1e1e;
+}
+
+.delete-btn {
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+.green-btn {
+    margin-top: 20px;
+	width: 95px;
+	float: left;
+    background-color: #097969;
+    color: #fff;
+    padding: 10px 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 16px;
+}
+
+.orange-btn {
+    margin-top: 20px;
+	width: 95px;
+	float: left;
+    background-color: #CD7F32;
+    color: #fff;
+    padding: 10px 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 16px;
+}
+
+.blue-btn {
+    margin-top: 20px;
+	width: 95px;
+	float: left;
+    background-color: #088F8F;
+    color: #fff;
+    padding: 10px 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 16px;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-input-button {
+            border: 1px solid #007bff;
+            color: white;
+            background-color: #007bff;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .file-input {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin: 0;
+            padding: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-name {
+            margin-left: 10px;
+        }
