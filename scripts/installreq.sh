@@ -8,4 +8,3 @@ apt update
 apt install -y caddy
 mkdir -p /etc/caddy/caddy.conf.d
 mkdir -p /usr/share/caddyweb
-echo "Change /etc/php/x.x/fpm/pool.d/www.conf (listen = 127.0.0.1:9000)\n and systemctl restart phpX.x-fpm"
