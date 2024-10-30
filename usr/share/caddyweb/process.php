@@ -1,7 +1,7 @@
 <?php
 session_start();
 include 'config.php';
-include 'config.class.php'; // Include the class file
+include 'config.class.php'; 
 $session_duration = time() - $_SESSION['lastactivity'];
 if ($session_duration > $timeout_duration) {
 	session_unset();
@@ -19,37 +19,27 @@ if ( isset($_GET['action']) ) {
 		header("Location: /domains.php?result=reloadsuccess");
 	}
 }
-// Check if the action is set
+
 if (isset($_POST['action'])) {
     $action = $_POST['action'];
 
-    // Handle the delete action
     if ($action === 'delete' && isset($_POST['domain'])) {
         $domain = $_POST['domain'];
-        // Define the path of the Caddyfile configuration file to delete
         $filePath = $domain;
-        // Check if the file exists
+
         if (file_exists($filePath)) {
-            // Attempt to delete the file
+
             if (unlink($filePath)) {
-                // Success: Redirect back to the main page with success message
                header('Location: domains.php?status=success&message=Deleted%20successfully');
             } else {
-                // Error deleting: Redirect with error message
                 header('Location: domains.php?status=error&message=Unable%20to%20delete%20the%20file');
             }
         } else {
-            // File does not exist: Redirect with error message
 			header('Location: domains.php?status=error&message=File%20does%20not%20exist');
         }
-    
-    // Handle the create action
     } elseif ($action === 'create') {
-        // Get the required fields
         $domain = trim($_POST['domain']);
         $upstreams = array_map('trim', explode(',', $_POST['upstreams']));
-        
-        // Checkboxes: Explicitly set them to false if not set in POST
 		$servername = $_POST['servername'];
         $httpOnly = isset($_POST['httpOnly']) ? true : false;
         $loadBalance = isset($_POST['loadBalance']) ? true : false;
@@ -85,21 +75,16 @@ if (isset($_POST['action'])) {
 			$ipaddr
         );
 
-
-        // Redirect back to the main page with success message
 		echo '<br/><br/><br/><br/>';
-		//print_r($_POST);
         header('Location: domains.php?status=success&message=Configuration%20created%20successfully');
     } elseif ( $action = 'deletecert' ) {
 		unlink($_POST['cert']);
 		unlink(str_replace('.crt','.key',$_POST['cert']));
 		header('Location: certs.php?status=deleteSuccess');
 	} else {
-        // Unknown action: Redirect with error message
         header('Location: domains.php?status=error&message=Unknown%20action');
     }
 } else {
-    // Missing parameters: Redirect with error message
     header('Location: domains.php?status=error&message=Missing%20parameters');
 }
 exit;

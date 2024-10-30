@@ -5,17 +5,17 @@ require_once 'config.php';
 $certfiles = glob($certsdir . '*.crt');
 
 function isProcessRunning($processName) {
-    // Execute the 'ps aux' command to get a list of running processes
+  
     exec("ps aux", $output);
 
-    // Loop through the output to find the process name
+
     foreach ($output as $line) {
         if (strpos($line, $processName) !== false) {
-            return true; // Process is running
+            return true; 
         }
     }
 
-    return false; // Process is not running
+    return false; 
 }
 
 $session_duration = time() - $_SESSION['lastactivity'];
@@ -40,7 +40,7 @@ else $_SESSION['lastactivity'] = time();
     <script>
         function confirmDelete(certfile) {
             if (confirm("Are you sure you want to delete " + certfile + "?")) {
-                // Send a POST request to process.php with action=delete and the domain
+               
                 var form = document.createElement('form');
                 form.method = 'POST';
                 form.action = 'process.php';
@@ -58,7 +58,7 @@ else $_SESSION['lastactivity'] = time();
                 form.appendChild(certInput);
 
                 document.body.appendChild(form);
-                form.submit(); // Submit the form
+                form.submit();
             }
         }
     </script>
@@ -70,7 +70,7 @@ else $_SESSION['lastactivity'] = time();
 			Caddy Status : <?= isProcessRunning('caddy') ? '<font color="#7FFFD4">Running</font>' : '<font color="#FF0000">Stopped</font>'; ?>
 		</h1>
         
-        <!-- Move "New Domain" button to the left, before the table -->
+
         <div class="top-bar">
 			<a href="domains.php" class="orange-btn" style="margin-left: 10px;">Domain<br/>Manager</a>
 			<a href="certs.php" class="orange-btn" style="margin-left: 10px;">Certificate<br/>Manager</a>

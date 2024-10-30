@@ -81,8 +81,6 @@ class CaddyfileWriter {
 
     public function __construct($filePath) {
         $this->filePath = $filePath;
-
-        // Create an empty Caddyfile if it doesn't exist
         if (!file_exists($this->filePath)) {
 
         }
@@ -97,12 +95,12 @@ class CaddyfileWriter {
 		$customCert,
 		$certFile,
         $insecureSkipVerify = false,
-        $loadBalancing = [false, ''],  // Array: [true/false, 'round_robin']
+        $loadBalancing = [false, ''], 
         $failDuration,
         $maxFails,
         $httpOnly = false,
-        $allowSpecificIPs = false,  // New parameter for allowed IPs
-        $allowedIPs = [] // IP array
+        $allowSpecificIPs = false,  
+        $allowedIPs = [] 
     ) 
 	{
 
@@ -124,7 +122,6 @@ class CaddyfileWriter {
 					}
 				$config .= "	}\n";
 			}
-				//print_r($domains);
 			if ( $letsEncrypt ) $config .= "tls $letsEncryptmail\n";
 			if ( $customCert ) $config .= "	tls " . $certFile . " " . str_replace('.crt','.key',$certFile) . "\n";
 			$config .= "	reverse_proxy {

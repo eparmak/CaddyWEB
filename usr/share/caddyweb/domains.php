@@ -16,20 +16,17 @@ if ( $_SESSION['logged'] != 1 ) header("Location: index.php");
 else $_SESSION['lastactivity'] = time();
 
 function isProcessRunning($processName) {
-    // Execute the 'ps aux' command to get a list of running processes
     exec("ps aux", $output);
 
-    // Loop through the output to find the process name
+ 
     foreach ($output as $line) {
         if (strpos($line, $processName) !== false) {
             return true; // Process is running
         }
     }
 
-    return false; // Process is not running
+    return false; 
 }
-
-// Example usage
 
 ?>
 
@@ -43,7 +40,6 @@ function isProcessRunning($processName) {
     <script>
         function confirmDelete(domain) {
             if (confirm("Are you sure you want to delete the configuration for " + domain + "?")) {
-                // Send a POST request to process.php with action=delete and the domain
                 var form = document.createElement('form');
                 form.method = 'POST';
                 form.action = 'process.php';
@@ -61,7 +57,7 @@ function isProcessRunning($processName) {
                 form.appendChild(domainInput);
 
                 document.body.appendChild(form);
-                form.submit(); // Submit the form
+                form.submit(); 
             }
         }
     </script>
@@ -73,7 +69,7 @@ function isProcessRunning($processName) {
 			Caddy Status : <?= isProcessRunning('caddy') ? '<font color="#7FFFD4">Running</font>' : '<font color="#FF0000">Stopped</font>'; ?>
 		</h1>
         
-        <!-- Move "New Domain" button to the left, before the table -->
+ 
         <div class="top-bar">
 			<a href="domains.php" class="orange-btn" style="margin-left: 10px;">Domain<br/>Manager</a>
 			<a href="certs.php" class="orange-btn" style="margin-left: 10px;">Certificate<br/>Manager</a>
