@@ -1,5 +1,17 @@
 <?php 
+session_start();
 require 'config.php'; 
+
+$session_duration = time() - $_SESSION['lastactivity'];
+if ($session_duration > $timeout_duration) {
+	session_unset();
+	session_destroy();
+	header("Location: index.php");
+}
+if ( $_SESSION['logged'] != 1 ) header("Location: index.php");
+
+else $_SESSION['lastactivity'] = time();
+
 if ( $_POST['action'] == 'uploadcert' ) {
 	print_r($_FILES['crt']);
 	if ( pathinfo($_FILES['crt']['name'], PATHINFO_EXTENSION) != 'crt' AND  pathinfo($_FILES['key']['name'], PATHINFO_EXTENSION) != 'crt' ) {

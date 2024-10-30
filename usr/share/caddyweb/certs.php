@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once 'certs.class.php';
 require_once 'config.php';
 $certfiles = glob($certsdir . '*.crt');
@@ -17,7 +18,15 @@ function isProcessRunning($processName) {
     return false; // Process is not running
 }
 
-// Example usage
+$session_duration = time() - $_SESSION['lastactivity'];
+if ($session_duration > $timeout_duration) {
+	session_unset();
+	session_destroy();
+	header("Location: index.php");
+}
+if ( $_SESSION['logged'] != 1 ) header("Location: index.php");
+
+else $_SESSION['lastactivity'] = time();
 
 ?>
 
@@ -29,8 +38,8 @@ function isProcessRunning($processName) {
     <title>Caddy Configuration Management</title>
     <link rel="stylesheet" href="css/styles.css">
     <script>
-        function confirmDelete(domain) {
-            if (confirm("Are you sure you want to delete the configuration for " + domain + "?")) {
+        function confirmDelete(certfile) {
+            if (confirm("Are you sure you want to delete " + certfile + "?")) {
                 // Send a POST request to process.php with action=delete and the domain
                 var form = document.createElement('form');
                 form.method = 'POST';
@@ -39,14 +48,14 @@ function isProcessRunning($processName) {
                 var actionInput = document.createElement('input');
                 actionInput.type = 'hidden';
                 actionInput.name = 'action';
-                actionInput.value = 'delete';
+                actionInput.value = 'deletecert';
                 form.appendChild(actionInput);
 
-                var domainInput = document.createElement('input');
-                domainInput.type = 'hidden';
-                domainInput.name = 'domain';
-                domainInput.value = domain;
-                form.appendChild(domainInput);
+                var certInput = document.createElement('input');
+                certInput.type = 'hidden';
+                certInput.name = 'cert';
+                certInput.value = certfile;
+                form.appendChild(certInput);
 
                 document.body.appendChild(form);
                 form.submit(); // Submit the form
@@ -122,21 +131,7 @@ function isProcessRunning($processName) {
 						<td><?= $validFrom; ?></td>
 						<td><?= $validTo; ?></td>
                         <td>
-							<form action="edit_domain.php" method="POST">
-								<input type="hidden" value="" name="filename">
-								<input type="hidden" value="" name="domain">
-								<input type="hidden" value="" name="upstreams">
-								<input type="hidden" value="" name="httpOnly">
-								<input type="hidden" value="" name="loadbalance">
-								<input type="hidden" value="" name="loadbalancemethod">
-								<input type="hidden" value="" name="failover">
-								<input type="hidden" value="" name="subjectaltname">
-								<input type="hidden" value="" name="maxFails">
-								<input type="hidden" value="" name="tlsInsecureVerify">
-								<input type="hidden" value="" name="letsEncrypt">
-								<button type="submit" class="edit-btn">Edit</button>
-							</form>
-                            <button class="delete-btn" onclick="confirmDelete('')">Delete</button>
+                            <button class="delete-btn" onclick="confirmDelete('<?= $certfile; ?>')">Delete</button>
                         </td>
                     </tr>
 					<?php  } ?>

@@ -1,9 +1,19 @@
 <?php
 require_once 'config.class.php';
 require_once 'config.php';
+session_start();
 $caddyReader = new CaddyfileReader();
 $conffiles = glob($confdir . '*');
 
+$session_duration = time() - $_SESSION['lastactivity'];
+if ($session_duration > $timeout_duration) {
+	session_unset();
+	session_destroy();
+	header("Location: index.php");
+}
+if ( $_SESSION['logged'] != 1 ) header("Location: index.php");
+
+else $_SESSION['lastactivity'] = time();
 
 function isProcessRunning($processName) {
     // Execute the 'ps aux' command to get a list of running processes
@@ -87,6 +97,8 @@ function isProcessRunning($processName) {
                     <th>Max Fails</th>
                     <th>Insecure Verify</th>
                     <th>Lets Encrypt</th>
+					<th>Custom Cert</th>
+					<th>Ip Restriction</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -109,6 +121,8 @@ function isProcessRunning($processName) {
                         <td><?= htmlspecialchars($conf['maxFails'] ?? 'N/A') ?></td>
                         <td><?= $conf['tlsInsecureVerify'] ? 'Yes' : 'No' ?></td>
                         <td><?= $conf['letsEncrypt'] ? 'Yes' : 'No' ?></td>
+						<td><?= $conf['customCert'] ? $conf['customCertCrt'] : 'No' ?></td>
+						<td><?= $conf['iprestriction'] ? implode('<br/>',$conf['allowedips']) : 'No' ?></td>
                         <td>
 							<form action="edit_domain.php" method="POST">
 								<input type="hidden" value="<?= $conf['filename'] ?>" name="filename">

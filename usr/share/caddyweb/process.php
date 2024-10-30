@@ -1,7 +1,16 @@
 <?php
+session_start();
 include 'config.php';
 include 'config.class.php'; // Include the class file
-print_r($_POST);
+$session_duration = time() - $_SESSION['lastactivity'];
+if ($session_duration > $timeout_duration) {
+	session_unset();
+	session_destroy();
+	header("Location: index.php");
+}
+if ( $_SESSION['logged'] != 1 ) header("Location: index.php");
+
+else $_SESSION['lastactivity'] = time();
 if ( isset($_GET['action']) ) {
 	$action = $_GET['action'];
 	
@@ -79,8 +88,13 @@ if (isset($_POST['action'])) {
 
         // Redirect back to the main page with success message
 		echo '<br/><br/><br/><br/>';
+		//print_r($_POST);
         header('Location: domains.php?status=success&message=Configuration%20created%20successfully');
-    } else {
+    } elseif ( $action = 'deletecert' ) {
+		unlink($_POST['cert']);
+		unlink(str_replace('.crt','.key',$_POST['cert']));
+		header('Location: certs.php?status=deleteSuccess');
+	} else {
         // Unknown action: Redirect with error message
         header('Location: domains.php?status=error&message=Unknown%20action');
     }

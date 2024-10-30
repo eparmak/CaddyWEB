@@ -4,10 +4,11 @@ class CaddyfileReader {
 	public function getConfig($path) {
 		$content = file_get_contents($path);
 		//Getting Domain
-		preg_match_all('/(?:http:\/\/)?([a-zA-Z0-9-]+\.[a-zA-Z0-9-]+\.[a-zA-Z]{2,}|[a-zA-Z0-9-]+\.[a-zA-Z]{2,})\b/',$content, $matches);
-			$domains = array_map('trim', $matches[0]);
-			$domains = implode(',',$domains);
-			
+		preg_match_all('/((?:[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\s*)+)\{/',$content, $matches);
+
+			$domains = array_map('trim', $matches[1]);
+			$domains = str_replace(' ',',',$domains);
+			$domains = $domains[0];
 		preg_match('/^http:\/\/([a-zA-Z0-9-]+\.[a-zA-Z0-9-]+\.[a-zA-Z]{2,}|[a-zA-Z0-9-]+\.[a-zA-Z]{2,})/', $content, $matches);
 			if ( !empty($matches[1]) ) {
 				$httpOnly = true;
@@ -29,8 +30,16 @@ class CaddyfileReader {
 			$loadbalance = true;
 			$lb_policy = $matchLoadBalance[1];
 		}
+		if ( preg_match('/\btls\s+([^\s]+\.crt)\s+([^\s]+\.key)\b/',$content, $matches) ) {
+			$customCert = [
+				'tls' => true,
+				'crt' => $matches[1],
+				'key' => $matches[2],
+			];
+		}
+		preg_match('/tls\s+([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/', $content, $tlsMatch);
+
 		if ( preg_match('/transport\s+http\s*\{/', $reverseMatches[1], $loadbalanceMatch) ) {
-			preg_match('/tls\s+([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/', $reverseMatches[1], $tlsMatch);
 			preg_match('/tls_insecure_skip_verify\s*(?=\s*[^a-zA-Z]|$)/', $reverseMatches[1], $tlsInsecureVerifyMatch);
 		}
 		if (!empty($toMatch[1])) {
@@ -45,6 +54,9 @@ class CaddyfileReader {
 		$config[] = [
 			'filename' => basename($path),
 			'domain' => $domains,
+			'customCert' => $customCert['tls'],
+			'customCertCrt' => $customCert['crt'],
+			'customCertKey' => $customCert['key'],
 			'upstreams' => $reverseProxyIps,
 			'iprestriction' => $iprestriction,
 			'allowedips' => $allowedIps,
@@ -93,7 +105,7 @@ class CaddyfileWriter {
         $allowedIPs = [] // IP array
     ) 
 	{
-		print_r($domain);
+
 		  if ( $httpOnly ) {
 			  $domains = str_replace(',',' http://',$domain);
 			  $domains = 'http://' . $domains;
@@ -101,7 +113,7 @@ class CaddyfileWriter {
 		  else {
 			  $domains = str_replace(',',' ',$domain);
 		  }
-		
+
 		$upstreams = str_replace(',',' ',$upstreams);
 		
 		$config = $domains . " {\n";
@@ -112,6 +124,9 @@ class CaddyfileWriter {
 					}
 				$config .= "	}\n";
 			}
+				//print_r($domains);
+			if ( $letsEncrypt ) $config .= "tls $letsEncryptmail\n";
+			if ( $customCert ) $config .= "	tls " . $certFile . " " . str_replace('.crt','.key',$certFile) . "\n";
 			$config .= "	reverse_proxy {
 		to " . implode(' ', $upstreams) . "
 		fail_duration $failDuration
@@ -120,12 +135,11 @@ class CaddyfileWriter {
 		if ($loadBalancing[0]) {
 		$config .= "	lb_policy $loadBalancing[1]\n";
 		}
-		if ( $letsEncrypt OR $insecureSkipVerify OR $customCert) {
+		if ( $customCert) {
 	$config .= "	transport http {\n";
-		if ( $letsEncrypt ) $config .= "			tls $letsEncryptmail\n";
 		if ( $insecureSkipVerify ) $config .= "			tls_insecure_skip_verify\n";
-		if ( $customCert ) $config .= "			tls $certFile " . str_replace('.crt','.key',$certFile) . "\n";
-	$config .= " 		}\n";
+
+		$config .= " 		}\n";
 	}
 	if ( $allowSpecificIPs ) $config .= "		@allowed_ip\n";
 	$config .= " 	}\n";

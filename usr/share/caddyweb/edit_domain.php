@@ -1,6 +1,17 @@
 <?php 
+session_start();
 require 'config.php'; 
 $certfiles = glob($certsdir . '*.crt');
+
+$session_duration = time() - $_SESSION['lastactivity'];
+if ($session_duration > $timeout_duration) {
+	session_unset();
+	session_destroy();
+	header("Location: index.php");
+}
+if ( $_SESSION['logged'] != 1 ) header("Location: index.php");
+
+else $_SESSION['lastactivity'] = time();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -61,8 +72,10 @@ $certfiles = glob($certsdir . '*.crt');
 			<div id="choosecert" style="display: none">
 				<label for="cert" style="margin-right: 10px">Choose Certificate</label>
 				<select id="cert" name="cert">
-					<?php foreach ( $certfiles as $certfile ) { ?>
-					<option value="$certfile"><?= basename($certfile); ?></option>
+					<?php foreach ( $certfiles as $certfile ) {
+						?>
+					
+					<option value="<?= $certfile; ?>"><?= basename($certfile); ?></option>
 					<?php } ?>
 				</select>			
 			</div>
@@ -103,11 +116,15 @@ $certfiles = glob($certsdir . '*.crt');
 		document.getElementById('httpOnly').addEventListener('change', function() {
 			if (this.checked) {
 				document.getElementById('letsEncrypt').checked = false;
+				document.getElementById('customCert').checked = false;
+				document.getElementById('choosecert').style.display = 'none';
 			}
 		});
 		document.getElementById('letsEncrypt').addEventListener('change', function() {
 			if (this.checked) {
 				document.getElementById('httpOnly').checked = false;
+				document.getElementById('customCert').checked = false;
+				document.getElementById('choosecert').style.display = 'none';
 			}
 		});
 		document.getElementById('loadBalance').addEventListener('change', function() {
