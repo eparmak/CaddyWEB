@@ -1,3 +1,2 @@
 #!/bin/bash
-yes | cp -rf usr/share/caddyweb/* /usr/share/caddyweb
-
+rsync -av --exclude='config.php' usr/share/caddyweb/ /usr/share/caddyweb
