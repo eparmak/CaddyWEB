@@ -9,6 +9,7 @@ if ($session_duration > $timeout_duration) {
 	session_destroy();
 	header("Location: index.php");
 }
+print_r($_POST);
 if ( $_SESSION['logged'] != 1 ) header("Location: index.php");
 
 else $_SESSION['lastactivity'] = time();
@@ -66,17 +67,16 @@ else $_SESSION['lastactivity'] = time();
             </div>
 			
 						<div class="checkbox-container">
-                <input type="checkbox" id="customCert" name="customCert" value="1">
+                <input type="checkbox" id="customCert" name="customCert" <?php if ( $_POST['customCert'] ) echo 'checked'; ?>>
                 <label for="customCert">Use Custom Certificate</label>
             </div>
 			<div id="choosecert" style="display: none">
 				<label for="cert" style="margin-right: 10px">Choose Certificate</label>
 				<select id="cert" name="cert">
 					<?php foreach ( $certfiles as $certfile ) {
-						?>
-					
-					<option value="<?= $certfile; ?>"><?= basename($certfile); ?></option>
-					<?php } ?>
+						if ( basename($certfile) == basename($_POST['customCertCrt']) ) echo "<option value='$certfile' selected>" . basename($certfile) . "</option>";
+						else echo "<option value='$certfile'>" . basename($certfile) . "</option>";
+					} ?>
 				</select>			
 			</div>
 			
@@ -161,7 +161,7 @@ else $_SESSION['lastactivity'] = time();
 				document.getElementById('choosecert').style.display = 'flex';
 				document.getElementById('httpOnly').checked = false;
 				document.getElementById('letsEncrypt').checked = false;
-				document.getElementById('customCert').checked = false;
+
 			}
 			
 			if (document.getElementById('loadBalance').checked) {

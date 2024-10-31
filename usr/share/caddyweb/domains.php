@@ -2,8 +2,6 @@
 require_once 'config.class.php';
 require_once 'config.php';
 session_start();
-$version = file_get_contents('version');
-echo 'Ver : ' . $version;
 $caddyReader = new CaddyfileReader();
 $conffiles = glob($confdir . '*');
 
@@ -134,6 +132,8 @@ function isProcessRunning($processName) {
 								<input type="hidden" value="<?= $conf['maxFails'] ?>" name="maxFails">
 								<input type="hidden" value="<?= $conf['tlsInsecureVerify'] ?>" name="tlsInsecureVerify">
 								<input type="hidden" value="<?= $conf['letsEncrypt'] ?>" name="letsEncrypt">
+								<input type="hidden" value="<?= $conf['customCert'] ?>" name="customCert">
+								<input type="hidden" value="<?= $conf['customCertCrt'] ?>" name="customCertCrt">
 								<button type="submit" class="edit-btn">Edit</button>
 							</form>
                             <button class="delete-btn" onclick="confirmDelete('<?= $confdir . $conf['filename'] ?>')">Delete</button>
