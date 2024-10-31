@@ -76,6 +76,7 @@ if (isset($_POST['action'])) {
         );
 
 		echo '<br/><br/><br/><br/>';
+		//print_r($_POST);
         header('Location: domains.php?status=success&message=Configuration%20created%20successfully');
     } elseif ( $action = 'deletecert' ) {
 		unlink($_POST['cert']);

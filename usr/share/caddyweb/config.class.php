@@ -69,7 +69,6 @@ class CaddyfileReader {
 			'httpOnly' => $httpOnly,
 			'failover' => $failOver
 		];
-		//print_r($config);
 		return $config;
 	}
 }
@@ -103,7 +102,7 @@ class CaddyfileWriter {
         $allowedIPs = [] 
     ) 
 	{
-
+		echo $insecureSkipVerify . '<br/>';
 		  if ( $httpOnly ) {
 			  $domains = str_replace(',',' http://',$domain);
 			  $domains = 'http://' . $domains;
@@ -132,16 +131,13 @@ class CaddyfileWriter {
 		if ($loadBalancing[0]) {
 		$config .= "	lb_policy $loadBalancing[1]\n";
 		}
-		if ( $customCert) {
 	$config .= "	transport http {\n";
-		if ( $insecureSkipVerify ) $config .= "			tls_insecure_skip_verify\n";
-
-		$config .= " 		}\n";
-	}
+	if ( $insecureSkipVerify ) $config .= "			tls_insecure_skip_verify\n";
+	$config .= " 		}\n";
 	if ( $allowSpecificIPs ) $config .= "		@allowed_ip\n";
 	$config .= " 	}\n";
 	$config .= "}\n";
-				
+			echo str_replace("\n","<br>",$config);	
 			
 			file_put_contents('/etc/caddy/caddy.conf.d/' . $servername,$config);
 	}
