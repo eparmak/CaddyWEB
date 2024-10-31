@@ -2,6 +2,8 @@
 require_once 'config.class.php';
 require_once 'config.php';
 session_start();
+$version = file_get_contents('version');
+echo 'Ver : ' . $version;
 $caddyReader = new CaddyfileReader();
 $conffiles = glob($confdir . '*');
 
