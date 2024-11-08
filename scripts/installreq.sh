@@ -9,3 +9,4 @@ apt update
 apt install -y caddy
 mkdir -p /etc/caddy/caddy.conf.d
 mkdir -p /usr/share/caddyweb
+mkdir -p /var/log/caddyweb
