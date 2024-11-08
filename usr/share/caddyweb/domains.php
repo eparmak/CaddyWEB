@@ -74,6 +74,7 @@ function isProcessRunning($processName) {
 			<a href="domains.php" class="orange-btn" style="margin-left: 10px;">Domain<br/>Manager</a>
 			<a href="certs.php" class="orange-btn" style="margin-left: 10px;">Certificate<br/>Manager</a>
 			<a href="process.php?action=reloadcaddy" class="blue-btn" style="margin-left: 10px;">Reload<br/>Caddy</a>
+			<a href="process.php?action=backup" class="blue-btn" style="margin-left: 10px;">Export<br/>Configuration</a>
 			<a href="new_domain.php" class="green-btn" style="float: right;">New Domain</a>
 
 

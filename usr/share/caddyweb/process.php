@@ -2,6 +2,7 @@
 session_start();
 include 'config.php';
 include 'config.class.php'; 
+include 'functions.php';
 $session_duration = time() - $_SESSION['lastactivity'];
 if ($session_duration > $timeout_duration) {
 	session_unset();
@@ -13,6 +14,22 @@ if ( $_SESSION['logged'] != 1 ) header("Location: index.php");
 else $_SESSION['lastactivity'] = time();
 if ( isset($_GET['action']) ) {
 	$action = $_GET['action'];
+	
+	if ( $action === 'backup' ) {
+		$exportdate = date('Y-m-d-H-i');
+		$hostname = gethostname();
+		$compressedFile = compressFolderToGz('/etc/caddy/caddy.conf.d', '/tmp/export-' . $hostname . '-' . $exportdate);
+		header('Content-Description: File Transfer');
+		header('Content-Type: application/gzip');
+		header('Content-Disposition: attachment; filename="' . basename($compressedFile) . '"');
+		header('Content-Transfer-Encoding: binary');
+		header('Expires: 0');
+		header('Cache-Control: must-revalidate');
+		header('Pragma: public');
+		header('Content-Length: ' . filesize($compressedFile));
+		readfile($compressedFile);
+		exit;
+	}
 	
 	if ( $action === 'reloadcaddy' ) {
 		$ret = shell_exec('/usr/bin/caddy reload --config=' . $basecaddyconfig);
