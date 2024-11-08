@@ -114,6 +114,10 @@ class CaddyfileWriter {
 		$upstreams = str_replace(',',' ',$upstreams);
 		
 		$config = $domains . " {\n";
+			$config .= "	log {\n";
+			$config .= '		output file "/var/log/caddyweb/' . $servername . '.log"' . "\n";
+			$config .= "		level DEBUG\n";
+			$config .= "	}\n";
 			if ( $allowSpecificIPs ) {
 				$config .= "	@allowed_ip {\n";
 					foreach ( $allowedIPs as $ipaddr ) {
